@@ -1,0 +1,78 @@
+System Calls Understanding
+
+fork: 
+creates a new process by duplicating the calling process.
+
+stat: 
+utility displays information about the file pointed to by
+file.
+
+kill: 
+utility sends a signal to the processes specified by the
+pid operands.
+
+mmap: 
+creates a new mapping in the virtual address space of the
+calling process.
+
+chmod: 
+utility modifies the file mode bits of the listed files
+as specified by the mode operand.
+
+waitpid: 
+system call suspends execution of the calling process
+until a child specified by pid argument has changed state.
+
+System Calls Fail
+
+fork:
+1.
+The system-imposed limit on the total number of processes
+under execution would be exceeded.  This limit is configuration-dependent.
+
+2.
+The system-imposed limit MAXUPRC (<sys/param.h>) on the
+total number of processes under execution by a single user
+would be exceeded.
+
+3.
+There is insufficient swap space for the new process.
+
+exec:
+All of these functions may fail and set errno for any of the errors specified for execve(2).
+
+unlink:
+It is an error to attempt to remove the files ``.'' or ``..''.
+
+read:
+EAGAIN
+The file descriptor fd refers to a file other than a socket and has been marked nonblocking (O_NONBLOCK), and the read would block.
+EAGAIN or EWOULDBLOCK
+The file descriptor fd refers to a socket and has been marked nonblocking (O_NONBLOCK), and the read would block. POSIX.1-2001 allows either error to be returned for this case, and does not require these constants to have the same value, so a portable application should check for both possibilities.
+EBADF
+fd is not a valid file descriptor or is not open for reading.
+EFAULT
+buf is outside your accessible address space.
+EINTR
+The call was interrupted by a signal before any data was read; see signal(7).
+EINVAL
+fd is attached to an object which is unsuitable for reading; or the file was opened with the O_DIRECT flag, and either the address specified in buf, the value specified in count, or the current file offset is not suitably aligned.
+EINVAL
+fd was created via a call to timerfd_create(2) and the wrong size buffer was given to read(); see timerfd_create(2) for further information.
+EIO
+I/O error. This will happen for example when the process is in a background process group, tries to read from its controlling terminal, and either it is ignoring or blocking SIGTTIN or its process group is orphaned. It may also occur when there is a low-level I/O error while reading from a disk or tape.
+EISDIR
+fd refers to a directory.
+Other errors may occur, depending on the object connected to fd. POSIX allows a read() that is interrupted after reading some data to return -1 (with errno set to EINTR) or to return the number of bytes already read.
+
+mount:
+If the type is not one of the internally known types, mount will
+attempt to execute a program in /sbin/mount_XXX where XXX is replaced
+by the type name.
+
+kill:
+The kill utility exits 0 on success, and >0 if an error occurs.
+
+chmod:  
+By default, chmod adds entries to the top of the local deny and
+local allow lists. Inherited entries are added by using the +ai mode.
